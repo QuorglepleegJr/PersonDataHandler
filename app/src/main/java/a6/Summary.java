@@ -72,12 +72,65 @@ public class Summary {
 
             case "summary" -> {
 
-                /*Scanner fileReader = new Scanner(args[2]);
+                String[] csvContentArray = readFullTextContents(args[1]);
 
-                String fileContents = fileReader.
+                Person[] people = parsePersonCSV(csvContentArray);
+
+                // Compute summary data
+
+                int numPeople = people.length; // Outputted
+
+                int minAge = Integer.MAX_VALUE; // Outputted
+                int maxAge = Integer.MIN_VALUE; // Outputted
+                int sumAge = 0; // Temporary
+                String youngestPersonsName = ""; // Outputted
+                String oldestPersonsName = ""; // Outputted
                 
-                Person[] people = parsePersonCSV();
-                */
+                int maxHeight = Integer.MIN_VALUE; // Outputted
+                String tallestPersonsName = ""; // Outputted
+                
+                int minWomansHeight = Integer.MAX_VALUE; // Temporary
+                String shortestWomansName = ""; // Outputted
+
+                for (Person person : people){
+                    
+                    int age = person.getAge();
+
+                    if (age < minAge){
+                        minAge = age;
+                        youngestPersonsName = person.getName();
+                    }
+
+                    if (age > maxAge){
+                        maxAge = age;
+                        oldestPersonsName = person.getName();
+                    }
+
+                    sumAge += age;
+
+                    int height = person.getHeight();
+
+                    if (height > maxHeight){
+                        maxHeight = height;
+                        tallestPersonsName = person.getName();
+                    }
+
+                    if (person.getSex() == 'F' && height < minWomansHeight){
+                        minWomansHeight = height;
+                        shortestWomansName = person.getName();
+                    }
+                }
+
+                float averageAge = sumAge / (float)numPeople; // Outputted
+
+                System.out.println("Summary:");
+                System.out.println(String.format("Total number of records: %i", numPeople));
+                System.out.println(String.format("Youngest person: %s (%i years old)", youngestPersonsName, minAge));
+                System.out.println(String.format("Oldest person: %s (%i years old)", oldestPersonsName, maxAge));
+                System.out.println(String.format("Average age: %f", averageAge));
+                System.out.println(String.format("Tallest person: %s (%i inches)", tallestPersonsName, maxHeight));
+                System.out.println(String.format("Shortest female: %s", shortestWomansName));
+
             }
 
             case "print" -> {
@@ -94,6 +147,36 @@ public class Summary {
     }
 
     /**
+     * Returns an array of all lines of text within a file
+     * @param filepath The path to the file
+     * @return The lines of the file, in an array
+     */
+    public static String[] readFullTextContents(String filepath){
+
+        Scanner fileReader = new Scanner(filepath);
+
+        ArrayList<String> fileContent = new ArrayList<String>();
+
+        while (fileReader.hasNextLine()){
+            fileContent.add(fileReader.nextLine());
+        }
+
+        fileReader.close();
+
+        // Cast back to Array for use with static array'd methods
+
+        Object[] fileObjectArray = fileContent.toArray();
+
+        String[] fileContentArray = new String[fileObjectArray.length];
+
+        for (int i = 0; i < fileObjectArray.length; i++){
+            fileContentArray[i] = fileObjectArray[i].toString();
+        }
+
+        return fileContentArray;
+    }
+
+    /**
      * Parses a csv string into an array of type Person
      * 
      * @param csv A string of the CSV contents
@@ -104,6 +187,13 @@ public class Summary {
         Person[] output;
 
         output = new Person[csv.length];
+
+        //Debug
+        for (String line : csv){
+            System.out.println(line);
+        }
+        // Somehow blank?
+        // TODO: Fix this
 
         for (int i = 1; i < csv.length; i++)
         {
@@ -119,6 +209,9 @@ public class Summary {
             int age = Integer.parseInt(parts[2]);
             int height = Integer.parseInt(parts[3]);
             int weight = Integer.parseInt(parts[4]);
+
+            //Debug
+            System.out.println(String.format("%s, %c, %i, %i, %i", name, sex, age, height, weight));
 
             output[i] = new Person(name, sex, age, height, weight);
 

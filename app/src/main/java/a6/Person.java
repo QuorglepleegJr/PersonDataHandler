@@ -33,10 +33,10 @@ public class Person {
      * Create a person with place holder data.
      */
     public Person() {
-        this("Baby Human", "X", 0, 20, 7);
+        this("Baby Human", 'X', 0, 20, 7);
     }
 
-    // ********** instance methods ********** //
+    // ********** accessors and mutators ********** //
     /**
      * Change this Person's name.
      *
@@ -54,6 +54,80 @@ public class Person {
     public String getName() {
         return name;
     }
+
+    /**
+     * Change this Person's sex.
+     * 
+     * @param newSex this Person's sex.
+     */
+    public void setSex(char newSex){
+        sex = newSex;
+    }
+
+    /**
+     * Return this Person's sex.
+     * 
+     * @return this Person's sex.
+     */
+    public char getSex(){
+        return sex;
+    }
+
+    /**
+     * Change this Person's age.
+     * 
+     * @param newAge this Person's age.
+     */
+    public void setAge(int newAge){
+        age = newAge;
+    }
+
+    /**
+     * Return this Person's age.
+     * 
+     * @return this Person's age.
+     */
+    public int getAge(){
+        return age;
+    }
+
+    /**
+     * Change this Person's height.
+     * 
+     * @param newHeight this Person's height.
+     */
+    public void setHeight(int newHeight){
+        height = newHeight;
+    } 
+
+    /**
+     * Return this Person's height.
+     * 
+     * @return this Person's height.
+     */
+    public int getHeight(){
+        return height;
+    }
+
+    /**
+     * Change this Person's weight.
+     * 
+     * @param newWeight this Person's weight.
+     */
+    public void setWeight(int newWeight){
+        weight = newWeight;
+    } 
+
+    /**
+     * Return this Person's weight.
+     * 
+     * @return this Person's weight.
+     */
+    public int getWeight(){
+        return weight;
+    }
+
+    // ********** instance methods ********** //
 
     /**
      * Provide a simple report on this Person.
