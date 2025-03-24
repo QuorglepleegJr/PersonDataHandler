@@ -18,7 +18,10 @@ public class Person {
      * Create a Person with the given name.
      *
      * @param initialName this Person's name
-     * @param 
+     * @param initialSex this Person's sex
+     * @param initialAge this Person's age
+     * @param initialHeight this Person's height
+     * @param initialWeight this Person's weight
      */
     public Person(String initialName, char initialSex, 
         int initialAge, int initialHeight, int initialWeight) {
@@ -154,7 +157,17 @@ public class Person {
      */
     @Override
     public String toString() {
-        return "Person: " + name;
+        StringBuilder outString = new StringBuilder("Person: ");
+        outString.append(name);
+        outString.append(", ");
+        outString.append(sex);
+        outString.append(", ");
+        outString.append(age);
+        outString.append(", ");
+        outString.append(height);
+        outString.append(", ");
+        outString.append(weight);
+        return outString.toString();
     }
 
 }

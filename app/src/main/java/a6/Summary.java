@@ -116,6 +116,7 @@ public class Summary {
                     }
 
                     if (person.getSex() == 'F' && height < minWomansHeight){
+                        System.out.println("SHORT WOMAN");
                         minWomansHeight = height;
                         shortestWomansName = person.getName();
                     }
@@ -124,12 +125,12 @@ public class Summary {
                 float averageAge = sumAge / (float)numPeople; // Outputted
 
                 System.out.println("Summary:");
-                System.out.println(String.format("Total number of records: %i", numPeople));
-                System.out.println(String.format("Youngest person: %s (%i years old)", youngestPersonsName, minAge));
-                System.out.println(String.format("Oldest person: %s (%i years old)", oldestPersonsName, maxAge));
+                System.out.println(String.format("Total number of records: %d", numPeople));
+                System.out.println("Youngest person: " + youngestPersonsName + String.format(" (%d years old)", minAge));
+                System.out.println("Oldest person: " + oldestPersonsName + String.format(" (%d years old)", maxAge));
                 System.out.println(String.format("Average age: %f", averageAge));
-                System.out.println(String.format("Tallest person: %s (%i inches)", tallestPersonsName, maxHeight));
-                System.out.println(String.format("Shortest female: %s", shortestWomansName));
+                System.out.println("Tallest person: " + tallestPersonsName + String.format(" (%d inches)", maxHeight));
+                System.out.println("Shortest female: " + shortestWomansName);
 
             }
 
@@ -153,15 +154,20 @@ public class Summary {
      */
     public static String[] readFullTextContents(String filepath){
 
-        Scanner fileReader = new Scanner(filepath);
-
         ArrayList<String> fileContent = new ArrayList<String>();
 
-        while (fileReader.hasNextLine()){
-            fileContent.add(fileReader.nextLine());
-        }
+        try (Scanner fileReader = new Scanner(new File(filepath))) {
 
-        fileReader.close();
+            while (fileReader.hasNextLine()){
+                String line = fileReader.nextLine();
+                if (line != "") fileContent.add(line);
+            }
+
+        } catch (FileNotFoundException e) {
+
+            System.out.println("Error opening the file " + filepath);
+
+        }
 
         // Cast back to Array for use with static array'd methods
 
@@ -186,34 +192,29 @@ public class Summary {
 
         Person[] output;
 
-        output = new Person[csv.length];
-
-        //Debug
-        for (String line : csv){
-            System.out.println(line);
-        }
-        // Somehow blank?
-        // TODO: Fix this
+        output = new Person[csv.length-1];
 
         for (int i = 1; i < csv.length; i++)
         {
 
-            String[] parts = csv[i].split(",\\w*");
+            String[] parts = csv[i].split(",");
+            for (int j = 1; j < parts.length; j++){
+                // Remove whitespace
+                parts[j] = parts[j].strip();
+            }
             // In order:
             // Name, Sex, Age, Height (in), Weight (lbs)
 
             // Whilst technically unnecessary to unpack like this, it clarifies what's happening
 
             String name = parts[0];
-            char sex = parts[1].charAt(0);
+            name = name.substring(1, name.length()-1); // Trim quotes
+            char sex = parts[1].charAt(1);
             int age = Integer.parseInt(parts[2]);
             int height = Integer.parseInt(parts[3]);
             int weight = Integer.parseInt(parts[4]);
 
-            //Debug
-            System.out.println(String.format("%s, %c, %i, %i, %i", name, sex, age, height, weight));
-
-            output[i] = new Person(name, sex, age, height, weight);
+            output[i-1] = new Person(name, sex, age, height, weight);
 
         }
 
