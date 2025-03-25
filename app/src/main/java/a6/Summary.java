@@ -135,7 +135,54 @@ public class Summary {
             }
 
             case "print" -> {
-                //TODO
+
+                String[] csvContentArray = readFullTextContents(args[1]);
+
+                Person[] people = parsePersonCSV(csvContentArray);
+                
+                if (args.length > 2){
+
+                    Comparator<Person> requiredComparator;
+
+                    boolean reversed = args.length > 3 && args[3] == "true";
+
+                    switch (args[2]){
+                        case "n" -> {
+                            requiredComparator = Person.BY_NAME;
+                        }
+                        case "a" -> {
+                            requiredComparator = Person.BY_AGE;
+                        }
+                        case "h" -> {
+                            requiredComparator = Person.BY_HEIGHT;
+                        }
+                        default -> {
+                            throw new IllegalArgumentException("Did not recognise sorting mode \"" + args[2] + "\"");
+                        }
+                    }
+
+                    Arrays.sort(people, requiredComparator);
+
+                    if (reversed){
+                        Person temp;
+                        for (int i = 0; i < people.length / 2; i++){
+                            temp = people[people.length-i-1];
+                            people[people.length-i-1] = people[i];
+                            people[i] = temp;
+                        }
+                    }
+
+                }
+
+                for (Person person : people){
+                    System.out.println(
+                        padString(person.getName(), 11) + 
+                        padString(((Character)person.getSex()).toString(), 11) +
+                        padString(((Integer)person.getAge()).toString(), 11) +
+                        padString(((Integer)person.getHeight()).toString(), 11) +
+                        padString(((Integer)person.getWeight()).toString(), 11)
+                    );
+                }
 
             }
             
@@ -220,6 +267,18 @@ public class Summary {
 
         return output;
 
+    }
+
+    public static String padString(String inp, int space){
+        return inp + getPadding(space - inp.length());
+    }
+
+    public static String getPadding(int space){
+        StringBuilder out = new StringBuilder();
+
+        for (int i = 0; i < space; i++) out.append(" ");
+
+        return out.toString();
     }
 
 }

@@ -1,5 +1,7 @@
 package a6;
 
+import java.util.Comparator;
+
 /**
  * A class representing a person -- suitable for extending into interesting
  * kinds of people -- like students or truck-drivers.
@@ -12,6 +14,31 @@ public class Person {
     private int age;
     private int height;
     private int weight;
+
+    // ********** comparators ********** //
+
+    public static final Comparator<Person> BY_NAME = new Comparator<Person>(){
+        @Override
+        public int compare(Person p1, Person p2){
+            return p1.name.compareTo(p2.name);
+        }
+    };
+
+    
+    public static final Comparator<Person> BY_AGE = new Comparator<Person>(){
+        @Override
+        public int compare(Person p1, Person p2){
+            return Integer.compare(p1.age, p2.age);
+        }
+    };
+
+    
+    public static final Comparator<Person> BY_HEIGHT = new Comparator<Person>(){
+        @Override
+        public int compare(Person p1, Person p2){
+            return Integer.compare(p1.height, p2.height);
+        }
+    };
 
     // ********** constructors ********** //
     /**
