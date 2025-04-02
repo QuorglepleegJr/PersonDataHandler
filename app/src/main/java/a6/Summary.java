@@ -57,6 +57,127 @@ public class Summary {
         }
     }
 
+    /**
+     * Summarises a csv file to the standard output
+     * @param filePath The path of the pile
+     */
+    public static void summarise(String filePath){
+        String[] csvContentArray = readFullTextContents(filePath);
+
+        Person[] people = parsePersonCSV(csvContentArray);
+
+        // Compute summary data
+
+        int numPeople = people.length; // Outputted
+
+        int minAge = Integer.MAX_VALUE; // Outputted
+        int maxAge = Integer.MIN_VALUE; // Outputted
+        int sumAge = 0; // Temporary
+        String youngestPersonsName = ""; // Outputted
+        String oldestPersonsName = ""; // Outputted
+        
+        int maxHeight = Integer.MIN_VALUE; // Outputted
+        String tallestPersonsName = ""; // Outputted
+        
+        int minWomansHeight = Integer.MAX_VALUE; // Temporary
+        String shortestWomansName = ""; // Outputted
+
+        for (Person person : people){
+            
+            int age = person.getAge();
+
+            if (age < minAge){
+                minAge = age;
+                youngestPersonsName = person.getName();
+            }
+
+            if (age > maxAge){
+                maxAge = age;
+                oldestPersonsName = person.getName();
+            }
+
+            sumAge += age;
+
+            int height = person.getHeight();
+
+            if (height > maxHeight){
+                maxHeight = height;
+                tallestPersonsName = person.getName();
+            }
+
+            if (person.getSex() == 'F' && height < minWomansHeight){
+                minWomansHeight = height;
+                shortestWomansName = person.getName();
+            }
+        }
+
+        float averageAge = sumAge / (float)numPeople; // Outputted
+
+        System.out.println("Summary:");
+        System.out.println(String.format("Total number of records: %d", numPeople));
+        System.out.println("Youngest person: " + youngestPersonsName + String.format(" (%d years old)", minAge));
+        System.out.println("Oldest person: " + oldestPersonsName + String.format(" (%d years old)", maxAge));
+        System.out.println(String.format("Average age: %f", averageAge));
+        System.out.println("Tallest person: " + tallestPersonsName + String.format(" (%d inches)", maxHeight));
+        System.out.println("Shortest female: " + shortestWomansName);
+    }
+
+    /**
+     * Prints the contents of an array of Person[]
+     * @param people the array to print
+     */
+    public static void printPersonArray(Person[] people){
+        for (Person person : people){
+            System.out.println(
+                padString(person.getName(), 11) + 
+                padString(((Character)person.getSex()).toString(), 11) +
+                padString(((Integer)person.getAge()).toString(), 11) +
+                padString(((Integer)person.getHeight()).toString(), 11) +
+                padString(((Integer)person.getWeight()).toString(), 11)
+            );
+        }
+    }
+
+    /**
+     * Prints the sorted array of Person[] according to the sort mode and reversal
+     * @param people The array of Person[] to sort and print
+     * @param sortMode The mode to sort by - "n" is name, "a" is age, "h" is height
+     * @param reversed Whether to reverse the order
+     */
+    public static void printSortedPersonArray(Person[] people, String sortMode, boolean reversed){
+
+        Comparator<Person> requiredComparator;
+
+        switch (sortMode){
+            case "n" -> {
+                requiredComparator = Person.BY_NAME;
+            }
+            case "a" -> {
+                requiredComparator = Person.BY_AGE;
+            }
+            case "h" -> {
+                requiredComparator = Person.BY_HEIGHT;
+            }
+            default -> {
+                throw new IllegalArgumentException("Did not recognise sorting mode \"" + sortMode + "\"");
+            }
+        }
+
+        Arrays.sort(people, requiredComparator);
+
+        if (reversed){
+            Person temp;
+            for (int i = 0; i < people.length / 2; i++){
+                temp = people[people.length-i-1];
+                people[people.length-i-1] = people[i];
+                people[i] = temp;
+            }
+        }
+
+        printPersonArray(people);
+
+    }
+
 
     public static void main(String[] args) throws IOException {
 
@@ -71,67 +192,7 @@ public class Summary {
             }
 
             case "summary" -> {
-
-                String[] csvContentArray = readFullTextContents(args[1]);
-
-                Person[] people = parsePersonCSV(csvContentArray);
-
-                // Compute summary data
-
-                int numPeople = people.length; // Outputted
-
-                int minAge = Integer.MAX_VALUE; // Outputted
-                int maxAge = Integer.MIN_VALUE; // Outputted
-                int sumAge = 0; // Temporary
-                String youngestPersonsName = ""; // Outputted
-                String oldestPersonsName = ""; // Outputted
-                
-                int maxHeight = Integer.MIN_VALUE; // Outputted
-                String tallestPersonsName = ""; // Outputted
-                
-                int minWomansHeight = Integer.MAX_VALUE; // Temporary
-                String shortestWomansName = ""; // Outputted
-
-                for (Person person : people){
-                    
-                    int age = person.getAge();
-
-                    if (age < minAge){
-                        minAge = age;
-                        youngestPersonsName = person.getName();
-                    }
-
-                    if (age > maxAge){
-                        maxAge = age;
-                        oldestPersonsName = person.getName();
-                    }
-
-                    sumAge += age;
-
-                    int height = person.getHeight();
-
-                    if (height > maxHeight){
-                        maxHeight = height;
-                        tallestPersonsName = person.getName();
-                    }
-
-                    if (person.getSex() == 'F' && height < minWomansHeight){
-                        System.out.println("SHORT WOMAN");
-                        minWomansHeight = height;
-                        shortestWomansName = person.getName();
-                    }
-                }
-
-                float averageAge = sumAge / (float)numPeople; // Outputted
-
-                System.out.println("Summary:");
-                System.out.println(String.format("Total number of records: %d", numPeople));
-                System.out.println("Youngest person: " + youngestPersonsName + String.format(" (%d years old)", minAge));
-                System.out.println("Oldest person: " + oldestPersonsName + String.format(" (%d years old)", maxAge));
-                System.out.println(String.format("Average age: %f", averageAge));
-                System.out.println("Tallest person: " + tallestPersonsName + String.format(" (%d inches)", maxHeight));
-                System.out.println("Shortest female: " + shortestWomansName);
-
+                summarise(args[1]);
             }
 
             case "print" -> {
@@ -139,51 +200,16 @@ public class Summary {
                 String[] csvContentArray = readFullTextContents(args[1]);
 
                 Person[] people = parsePersonCSV(csvContentArray);
-                
+
                 if (args.length > 2){
-
-                    Comparator<Person> requiredComparator;
-
                     boolean reversed = args.length > 3 && args[3] == "true";
-
-                    switch (args[2]){
-                        case "n" -> {
-                            requiredComparator = Person.BY_NAME;
-                        }
-                        case "a" -> {
-                            requiredComparator = Person.BY_AGE;
-                        }
-                        case "h" -> {
-                            requiredComparator = Person.BY_HEIGHT;
-                        }
-                        default -> {
-                            throw new IllegalArgumentException("Did not recognise sorting mode \"" + args[2] + "\"");
-                        }
-                    }
-
-                    Arrays.sort(people, requiredComparator);
-
-                    if (reversed){
-                        Person temp;
-                        for (int i = 0; i < people.length / 2; i++){
-                            temp = people[people.length-i-1];
-                            people[people.length-i-1] = people[i];
-                            people[i] = temp;
-                        }
-                    }
-
+                    printSortedPersonArray(people, args[2], reversed);
                 }
 
-                for (Person person : people){
-                    System.out.println(
-                        padString(person.getName(), 11) + 
-                        padString(((Character)person.getSex()).toString(), 11) +
-                        padString(((Integer)person.getAge()).toString(), 11) +
-                        padString(((Integer)person.getHeight()).toString(), 11) +
-                        padString(((Integer)person.getWeight()).toString(), 11)
-                    );
+                else{
+                    printPersonArray(people);
                 }
-
+                
             }
             
             default -> {
